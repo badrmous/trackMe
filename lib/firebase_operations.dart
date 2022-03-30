@@ -18,7 +18,7 @@ class FirebaseOperations extends ChangeNotifier {
       "Lat": lat,
       "Long": long,
       "address": address,
-      "date": date,
+      "date": date.toString(),
     };
 
     await documentReferencer

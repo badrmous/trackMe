@@ -8,15 +8,49 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      key: Key("history"),
-      body: StreamBuilder(
+      appBar: AppBar(
+        title: const Text('history'),
+        backgroundColor: Colors.green[700],
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Icon(Icons.arrow_back),
+        ),
+      ),
+      body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection("locations").snapshots(),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return const Center(child: CircularProgressIndicator());
           } else {
-            print(snapshot.data);
-            return Text("data");
+            return ListView(
+                children: snapshot.data!.docs.map(
+              (DocumentSnapshot e) {
+                Map<String, dynamic> data = e.data() as Map<String, dynamic>;
+                return Container(
+                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: const [
+                        BoxShadow(
+                            blurRadius: 5,
+                            offset: Offset(0, 2),
+                            color: Colors.black38)
+                      ]),
+                  child: Column(
+                    children: [
+                      Text("lat : ${data["Lat"]}"),
+                      Text("long : ${data["Long"]}"),
+                      Text("address : ${data["address"]}"),
+                      Text("date : ${data["date"]}")
+                    ],
+                  ),
+                );
+              },
+            ).toList());
           }
         }),
       ),
